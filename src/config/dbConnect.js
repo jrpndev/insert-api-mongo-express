@@ -1,7 +1,17 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
+import { environment } from "../environment/environment.js";
 
-mongoose.connect("mongodb+srv://jrpcodes:asafugaz394@jrui7977.6puctqf.mongodb.net/Library");
+const { USER, PASSWORD, HOST, DATABASE, TYPE } = environment;
 
-let db = mongoose.connection;
+const connectionString = `mongodb+${TYPE}://${USER}:${PASSWORD}@${HOST}/${DATABASE}?retryWrites=true&w=majority`;
+
+mongoose.connect(connectionString, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
+
+const db = mongoose.connection;
+
+db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 export default db;

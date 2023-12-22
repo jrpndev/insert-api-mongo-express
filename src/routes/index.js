@@ -1,16 +1,18 @@
 import express from "express";
-import livros from "./livrosRoutes.js"
-import autores from "./autoresRoutes.js"
-
+import books from "./books.js";
+import authors from "./authors.js";
+import users from "./users.js"
+import auth from "./auth.js"
 const routes = (app) => {
   app.route('/').get((req, res) => {
-    res.status(200).send({titulo: "Curso de node"})
+    res.status(200).send({ titulo: "WellCome to Bibliotech!" })
   })
-
   app.use(
     express.json(),
-    livros,
-    autores
+    books,
+    authors,
+    users,
+    auth
   )
 }
 
