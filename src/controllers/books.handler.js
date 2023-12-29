@@ -1,4 +1,5 @@
 import books from "../models/books.js";
+import uploadFile from "../utils/sendImage.js";
 
 class BookController {
 
@@ -24,17 +25,53 @@ class BookController {
       });
   }
 
-  static createBook = (req, res) => {
-    let book = new books(req.body);
+  static createBook = async (req, res) => {
+    try {
+      const { title, author, publisher, numPages, owner } = req.body;
 
-    book.save((err) => {
-      if (err) {
-        res.status(500).send({ message: `${err.message} - Failed to create book.` });
-      } else {
-        res.status(201).send(book.toJSON());
-      }
-    });
+      const book = new books({
+        title,
+        author,
+        publisher,
+        numPages,
+        owner,
+        imageUrl: '',
+      });
+
+      await book.save();
+
+      res.status(201).send(await books.findById(book._id));
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ message: 'Failed to create book.' });
+    }
   }
+
+  static uploadImage = async (req, res) => {
+    try {
+      const { owner, bookId } = req.params;
+      const file = req.file;
+
+      const metadata = {
+        contentType : req.file.mimetype
+      }
+  
+      if (!file) {
+        return res.status(400).send({ message: 'No file provided.' });
+      }
+  
+      const imageUrl = await uploadFile(owner, bookId, file.buffer, metadata, req.file.originalName);
+  
+      await books.findByIdAndUpdate(bookId, { $set: { imageUrl } });
+  
+      res.status(200).send({ imageUrl });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ message: 'Failed to upload image.' });
+    }
+  }
+  
+
 
   static updateBook = (req, res) => {
     const id = req.params.id;

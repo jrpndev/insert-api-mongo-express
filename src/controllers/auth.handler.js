@@ -46,6 +46,72 @@ class AuthController {
       res.status(500).send({ message: 'Internal Server Error' });
     }
   }
+
+  static forgotPassword = async (req, res) => {
+    try {
+      const { email } = req.body;
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        return res.status(404).send({ message: 'User not found.' });
+      }
+
+      const recoveryCode = crypto.randomBytes(4).toString('hex').toUpperCase();
+
+      user.recoveryCode = recoveryCode;
+      await user.save();
+
+      await sendRecoveryEmail(user.email, recoveryCode);
+
+      res.status(200).send({ message: 'Recovery code sent successfully.' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: 'Internal Server Error' });
+    }
+  }
+
+  static compareRecoveryCode = async (req, res) => {
+    try {
+      const { email, recoveryCode } = req.body;
+      const user = await User.findOne({ email });
+
+      if (!user || !user.recoveryCode) {
+        return res.status(400).send({ message: 'Invalid request.' });
+      }
+
+      if (recoveryCode === user.recoveryCode) {
+        res.status(200).send({ message: 'Recovery code is valid.' });
+      } else {
+        res.status(401).send({ message: 'Invalid recovery code.' });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: 'Internal Server Error' });
+    }
+  }
+
+  static resetPassword = async (req, res) => {
+    try {
+      const { email, newPassword } = req.body;
+      const user = await User.findOne({ email });
+
+      if (!user || !user.recoveryCode) {
+        return res.status(400).send({ message: 'Invalid request.' });
+      }
+
+      user.recoveryCode = null;
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      user.password = hashedPassword;
+      
+      await user.save();
+
+      res.status(200).send({ message: 'Password reset successfully.' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: 'Internal Server Error' });
+    }
+  }
 }
 
 export default AuthController;

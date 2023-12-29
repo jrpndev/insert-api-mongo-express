@@ -9,7 +9,8 @@ const bookSchema = new mongoose.Schema(
     },
     publisher: { type: String, required: true },
     numPages: { type: Number },
-    owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    imageUrl: { type: String }
   }
 );
 
