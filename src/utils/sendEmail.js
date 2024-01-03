@@ -1,11 +1,15 @@
 import nodemailer from 'nodemailer';
-import { environment } from '../environment/environment';
+import { environment } from '../environment/environment.js';
+
 const EMAIL = environment.EMAIL;
-const EMAIL_PASSWORD = environment.PASSWORD;
+const EMAIL_PASSWORD = environment.EMAIL_PASSWORD;
 
 const sendRecoveryEmail = async (recipientEmail, recoveryCode) => {
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: "gmail",
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
     auth: {
       user: EMAIL,
       pass: EMAIL_PASSWORD,
@@ -13,7 +17,7 @@ const sendRecoveryEmail = async (recipientEmail, recoveryCode) => {
   });
 
   const mailOptions = {
-    from: EMAIL_PASSWORD,
+    from: EMAIL,
     to: recipientEmail,
     subject: 'Código de Recuperação de Senha',
     text: `Seu código de recuperação de senha é: ${recoveryCode}`,

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema(
+const PublisherSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
@@ -16,14 +16,14 @@ const userSchema = new mongoose.Schema(
       zipCode: { type: String }
     },
     phoneNumber: { type: String },
-    dateOfBirth: { type: Date },
-    imageUrl: { type: String },
+    website: { type: String },
+    foundingYear: { type: Number },
   },
   {
     versionKey: false
   }
 );
 
-const User = mongoose.model("Clients", userSchema);
+const Publisher = mongoose.model("Publishers", PublisherSchema);
 
-export default User;
+export default Publisher;

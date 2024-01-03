@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema(
+const AuthorSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
@@ -9,21 +9,21 @@ const userSchema = new mongoose.Schema(
     recoveryCode: { type: String },
     recoveryCodeExpiry: { type: Date },
     refreshToken: { type: String },
-    address: {
-      street: { type: String },
-      city: { type: String },
-      state: { type: String },
-      zipCode: { type: String }
-    },
-    phoneNumber: { type: String },
+    biography: { type: String },
     dateOfBirth: { type: Date },
-    imageUrl: { type: String },
+    nationality: { type: String },
+    website: { type: String },
+    socialMedia: {
+      twitter: { type: String },
+      facebook: { type: String },
+      instagram: { type: String },
+    },
   },
   {
     versionKey: false
   }
 );
 
-const User = mongoose.model("Clients", userSchema);
+const Authors = mongoose.model("Authors", AuthorSchema);
 
-export default User;
+export default Authors;
